@@ -9,5 +9,5 @@ for bucket in s3.buckets.all():
     print(bucket.name)
 
 # Upload a new file
-data = open('/Users/saupathak/Devops/kubernetes/ovn_kubernetes.png', 'rb')
-s3.Bucket('kopsstatenew').put_object(Key='ovn_kubernetes.png', Body=data)
+data = open('', 'rb')
+s3.Bucket('').put_object(Key='', Body=data)
