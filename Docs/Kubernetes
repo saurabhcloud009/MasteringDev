@@ -1,0 +1,115 @@
+Kubernetes
+
+//Cheat-Sheet
+https://kubernetes.io/docs/reference/kubectl/cheatsheet/
+
+
+//Kubernetes Architeture
+
+----------------------------------------------------------------------------------------------------------------------------
+-
+-		    	  [MASTER's]								Kubernetes[Nodes/Minon/Worker Node]                           - 
+-
+- {Developer}	  Api Server 							  Kubelet 	Kube-proxy                                        - 
+-		    		 |			   {ETCD}					
+-		  	    	Scheduler								POD			POD  ----------------->(Application End User)
+-		    		 |
+-		  		Controller Manager			  	               DOCKER							{{{Service: Load Balancer}}}
+-
+----------------------------------------------------------------------------------------------------------------------------
+
+
+
+\\Use curl to download and install the latest Minikube release:
+
+curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-darwin-amd64 && \
+  chmod +x minikube && \
+  sudo mv minikube /usr/local/bin
+
+
+ \\Use Homebrew to install the xhyve driver and set its permissions:
+
+brew install docker-machine-driver-xhyve
+sudo chown root:wheel $(brew --prefix)/opt/docker-machine-driver-xhyve/bin/docker-machine-driver-xhyve
+sudo chmod u+s $(brew --prefix)/opt/docker-machine-driver-xhyve/bin/docker-machine-driver-xhyve
+
+\\ Use Homebrew to download the kubectl command-line tool, which you can use to interact with Kubernetes clusters:
+
+brew install kubectl
+
+
+\\Determine whether you can access sites like https://cloud.google.com/container-registry/ directly without a proxy, by opening a new terminal and using
+
+curl --proxy "" https://cloud.google.com/container-registry/
+
+\\If NO proxy is required, start the Minikube cluster:
+
+minikube start --vm-driver=xhyve
+
+\\Make sure that the Docker daemon is started. You can determine if docker is running by using a command such as:
+
+docker images
+
+\\Now set the Minikube context. The context is what determines which cluster kubectl is interacting with. You can see all your available contexts in the ~/.kube/config file.
+
+kubectl config use-context minikube
+
+\\Verify that kubectl is configured to communicate with your cluster:
+
+kubectl cluster-info
+
+\\Open the Kubernetes dashboard in a browser:
+ minikube dashboard --url
+
+ eval $(minikube docker-env)
+
+ \\Imp url 
+https://medium.freecodecamp.org/learn-kubernetes-in-under-3-hours-a-detailed-guide-to-orchestrating-containers-114ff420e882
+
+//deployment process
+
+kubectl expose deployment tomcat-deployment --type=NodePort
+
+minikube service tomcat-deployment --url
+
+
+
+//Scaling PODS
+i) kubectl scale --replicas=2 deployment/tomcat-deployment
+
+//Apply Load Balancer beofre replicated PODS
+ii) kubectl expose deployment tomcat-deployment --type=LoadBalancer --port=8080 --target-port=8080 --name tomcat-load-balancer
+
+
+
+//Update the Image
+
+kubectl set image deployment/tomcat-deployment tomcat=tomcat:9.0.1
+
+
+//RollOut and Selector
+
+kubectl rollout status deployment tomcat-deployment
+kubectl rollout status deployment tomcat-deployment --revision
+
+// label and Selector
+kubectl label node minikube Name=MyClusterNode
+
+//Liveness and HealthCheck
+
+
+//Commands
+https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#delete
+
+
+
+//DNS standard naming convention
+my-service-name.my-namespace.svc.cluster.local
+
+
+
+// Important Links
+http://kubernetesbyexample.com/nodes/
+https://www.linux.com/blog/learn/chapter/Intro-to-Kubernetes/2017/5/set-cicd-pipeline-kubernetes-part-1-overview
+
+for i in `kubectl get pods|awk '{if ($3 == "ErrImagePull") print $0;}'`;do kubectl delete pod $i;done

@@ -1,0 +1,43 @@
+---
+
+- hosts: 127.0.0.1
+  connection: local
+   
+  vars_prompt:
+    - name: Username
+      prompt: "Username"
+      private: no 
+
+
+  pre_tasks:                                        
+    - name: 'Validate input: Username'              
+      fail: msg="You must provide a Username"       
+      when: Username == ""                          
+
+  tasks:
+#  Basic user creation example
+  - debug:
+       msg: "{{Username}}"
+
+  - name: remove policies
+    iam_policy:
+      iam_type: user
+      iam_name: "{{ item.user }}"
+      policy_name: test
+      state: absent
+    with_items:
+      - user: "{{Username}}"
+
+  - name: remove users
+    iam:
+      iam_type: user
+      name: "{{item}}"
+      state: absent
+      password: remove
+      access_key_state: remove
+    with_items:
+      - "{{Username}}"
+            
+
+
+

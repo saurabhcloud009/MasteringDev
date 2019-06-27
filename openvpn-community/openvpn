@@ -1,0 +1,83 @@
+#!/bin/bash
+OVPN_HOME="/etc/openvpn"
+OVPN_PID_FILE="/var/run/ovpn.pid"
+if [ -f ${OVPN_PID_FILE} ]; then
+        OVPN_PID=`cat ${OVPN_PID_FILE}`
+fi
+
+# ***********************************************
+# ***********************************************
+
+# colors
+red='\e[0;31m'
+green='\e[0;32m'
+yellow='\e[0;33m'
+reset='\e[0m'
+
+echoRed() { echo -e "${red}$1${reset}"; }
+echoGreen() { echo -e "${green}$1${reset}"; }
+echoYellow() { echo -e "${yellow}$1${reset}"; }
+
+start() {
+        cd ${OVPN_HOME}
+        /usr/sbin/openvpn --log /var/log/openvpn.log --config /etc/openvpn/server.conf &
+        echo $! > ${OVPN_PID_FILE}
+        echoGreen "OpenVPN Server - Started"
+}
+
+stop() {
+        if [ -f ${OVPN_PID_FILE} ] && [ "`ps axf | grep ${OVPN_PID} | grep openvpn | grep -v grep`" ] ; then
+                kill -9 ${OVPN_PID}
+                while true
+                do
+                if [ -z "`ps axf | grep ${OVPN_PID} | grep openvpn | grep -v grep`" ]; then
+                        rm -rf ${OVPN_PID_FILE}
+                        echoGreen "OpenVPN Server - Stopped"
+                        break
+                fi
+                done
+        else
+                echoRed "OpenVPN Server - Already Stopped"
+        fi
+}
+
+case "$1" in
+start)
+        if [ ! -f ${OVPN_PID_FILE} ]; then
+                start
+                exit 0
+        else
+                if [ -z "`ps axf | grep ${OVPN_PID} | grep openvpn | grep -v grep`" ]; then
+                        start
+                        exit 0
+                else
+                        echoYellow "OpenVPN Server - Already Running [${OVPN_PID}]"
+                fi
+        fi
+;;
+
+status)
+        if [ -f ${OVPN_PID_FILE} ]; then
+                        if [ -z "`ps axf | grep ${OVPN_PID} | grep openvpn | grep -v grep`" ]; then
+                                        echoRed "OpenVPN Server - Process Dead [PID File Exists]"
+                        else
+                                        echoGreen "OpenVPN Server - Running [${OVPN_PID}]"
+                        fi
+        else
+                        echoRed "OpenVPN Server - Not Running"
+        fi
+;;
+
+stop)
+        stop
+;;
+
+restart)
+        stop
+        start
+;;
+
+*)
+    echo "Usage: $0 {status|start|stop|restart}"
+    exit 1
+esac

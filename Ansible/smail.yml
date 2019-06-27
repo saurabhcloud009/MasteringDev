@@ -1,0 +1,20 @@
+---
+- name: mail
+  hosts: localhost
+  gather_facts: False
+  connection: local
+  tasks:
+    - name: Send mail
+      mail:
+        host: smtp.gmail.com
+        port: 587
+        username: 
+        password: 0
+        subject: Mail test in progress
+        body: Mail on fire
+        from: 
+        to:
+        secure: starttls
+        charset: utf-8
+      delegate_to: localhost
+      run_once: True

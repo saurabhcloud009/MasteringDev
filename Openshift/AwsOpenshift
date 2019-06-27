@@ -1,0 +1,72 @@
+1  yum install docker wget -y
+    2  sudo yum install -y docker
+    3  sudo yum install -y docker*
+    4  sudo yum-config-manager --enable "Red Hat Enterprise Linux Server 7 Extra(RPMs)"
+    5  sudo yum -y install docker
+    6  sed -i '/OPTIONS=.*/c\OPTIONS="--selinux-enabled --insecure-registry 172.30.0.0/16"' /etc/sysconfig/docker
+    7  systemctl restart docker
+    8  docker ps
+    9  wget https://github.com/openshift/origin/releases/download/v3.7.0/openshift-origin-client-tools-v3.7.0-7ed6862-linux-64bit.tar.gz
+   10  tar -xvf tar -xvf openshift-origin-client-tools-v3.7.0-7ed6862-linux-64bit.tar.gz
+   11  ls
+   12  tar tar -xvf tar -xvf openshift-origin-client-tools-v3.7.0-7ed6862-linux-64bit.tar.gz
+   13  ls
+   14  tar openshift-origin-client-tools-v3.7.0-7ed6862-linux-64bit.tar.gz
+   15   tar -xvf tar -xvf openshift-origin-client-tools-v3.7.0-7ed6862-linux-64bit.tar.gz
+   16  ls
+   17  gunzip openshift-origin-client-tools-v3.7.0-7ed6862-linux-64bit.tar.gz
+   18  ls
+   19  tar xvf openshift-origin-client-tools-v3.7.0-7ed6862-linux-64bit.tar
+   20  ls
+   21  cd openshift-origin-client-tools-v3.7.0-7ed6862-linux-64bit
+   22  l;s
+   23  ls
+   24  mv openshift-origin-client-tools-v3.7.0-7ed6862-linux-64bit/oc /usr/bin/
+   25  mv openshift-origin-client-tools-v3.7.0-7ed6862-linux-64bcd/oc /usr/bin/
+   26  cd
+   27  mv openshift-origin-client-tools-v3.7.0-7ed6862-linux-64bit/oc /usr/bin/
+   28  ls
+   29   tar -xvf tar -xvf openshift-origin-client-tools-v3.7.0-7ed6862-linux-64bit.tar.gz
+   30  wget https://github.com/openshift/origin/releases/download/v3.7.0/openshift-origin-client-tools-v3.7.0-7ed6862-linux-64bit.tar.gz
+   31  ls
+   32  gunzip openshift-origin-client-tools-v3.7.0-7ed6862-linux-64bit.tar.gz
+   33  tar -xvf openshift-origin-client-tools-v3.7.0-7ed6862-linux-64bit.tar
+   34  ls
+   35  mv openshift-origin-client-tools-v3.7.0-7ed6862-linux-64bit/oc /usr/bin/
+   36  oc lcuster up
+   37  oc cluster up
+   38  oc login -u system:admin
+   39  oc adm policy add-scc-to-user anyuid -z default
+   40  oc statius
+   41  oc status
+   42  oc cluster dowqn
+   43  oc cluster down
+   44  openshift start --public-master='https://34.217.30.250.nip.io:8443' --master='https://172.31.22.122:8443' --listen='https://0.0.0.0:8443' ----insecure-skip-tls-verify
+   45  oc lcuster up --public-master='https://34.217.30.250.nip.io:8443' --master='https://172.31.22.122:8443' --listen='https://0.0.0.0:8443' ----insecure-skip-tls-verify
+   46  oc cluster up --public-master='https://34.217.30.250.nip.io:8443' --master='https://172.31.22.122:8443' --listen='https://0.0.0.0:8443' ----insecure-skip-tls-verify
+   47  oc cluster up --public-hostname='ec2-34-217-30-250.us-west-2.compute.amazonaws.com' --routing-suffix='ec2-34-217-30-250.us-west-2.compute.amazonaws.com' ----insecure-skip-tls-verify
+   48  oc cluster up --public-master='https://34.217.30.250.nip.io:8443' --master='https://172.31.22.122:8443' --listen='https://0.0.0.0:8443' --insecure-skip-tls-verify
+   49  oc cluster up --public-hostname='ec2-34-217-30-250.us-west-2.compute.amazonaws.com' --routing-suffix='ec2-34-217-30-250.us-west-2.compute.amazonaws.com' --insecure-skip-tls-verify
+   50  oc status
+   51  oc status
+   52  curl localhost:8443
+   53  oc status
+   54  oc cluster up --public-hostname='ec2-34-217-30-250.us-west-2.compute.amazonaws.com' --routing-suffix='ec2-34-217-30-250.us-west-2.compute.amazonaws.com' --insecure-skip-tls-verify
+   55  oc cluster up --public-hostname='ec2-34-217-30-250.us-west-2.compute.amazonaws.com' --routing-suffix='ec2-34-217-30-250.us-west-2.compute.amazonaws.com'
+   56  df -h
+   57  oc cluster up --public-hostname='ec2-34-217-30-250.us-west-2.compute.amazonaws.com' --routing-suffix='ec2-34-217-30-250.us-west-2.compute.amazonaws.com'
+   58  oc login -u system:admin
+   59  oc adm policy add-scc-to-user anyuid -z default
+   60  oc adm policy add-cluster-role-to-user cluster-admin sean
+   61  oc new-project myproject
+   62  oc new-app --name='cotd' --labels name='cotd' php~https://github.com/devops-with-openshift/cotd.git -e SELECTOR=cats
+   63  oc login -u sean
+   64   oc new-project mydemo
+
+   Command
+   oc cluster up --host-data-dir=/srv --use-existing-config --public-hostname='ec2-34-217-30-250.us-west-2.compute.amazonaws.com' --routing-suffix='ec2-34-217-30-250.us-west-2.compute.amazonaws.com' --insecure-skip-tls-verify  --logging=true --metrics=true
+
+
+
+
+   Team foundation server plugin

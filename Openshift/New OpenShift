@@ -1,0 +1,61 @@
+
+docker system prune --volumes -f
+######Get A New Projecet
+ 
+ --> Create New Project
+
+ oc new-project myproject
+
+ --> Switch to Project
+
+ oc project myproject
+
+ --> Create new Project
+
+oc new-app --name='cotd' --labels name='cotd' php~https://github.com/devops-with-openshift/cotd.git -e SELECTOR=cats 
+ 
+
+ --> Check the logs using build config
+
+ oc logs -f bc/cotD
+
+ --> Expose the Service
+
+ oc expose service cotd
+
+
+#######Create a Persistent Volume
+
+ oc login -u system:admin
+
+oc create -f volume.yaml
+
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: myvolume
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+   - ReadWriteOnce
+   - ReadWriteMany
+  persistentVolumeReclaimPolicy: Recycle
+  hostPath:
+    path: /tmp/myvolume
+
+
+#########Set Up the Volume Claim
+oc login -u saurabh -p saurabh
+oc project myproject
+
+
+ oc volume dc/cotd --add --name=images --type=persistentVolumeClaim  --mount-path=/opt/app-root/src/data/images --claim-name=myvolumeclaim --claim-size=500Mi --mount-path=/opt/app-root/src/data --containers=cotd 
+ 
+ 
+ 
+
+ 
+
+

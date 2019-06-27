@@ -1,0 +1,100 @@
+package 'httpd'
+	service 'httpd' do
+	action [:enable, :start]
+end
+
+template '/var/www/html/index.html' do
+	source 'index.html.erb'
+end
+
+//Step to go witg Cgecj 
+wget https://packages.chef.io/stable/el/6/chefdk-1.0.3-1.el6.x86_64.rpm
+rpm -ivh chefdk-1.0.3-1.el6.x86_64.rpm
+mkdir cookbooks
+cd cookbooks
+chef generate cookbook httpd_deploy
+chef generate template httpd_deploy index.html
+vim index.html.erb
+Welcome to Chef Apache Deployment
+
+vim default.rb
+package 'httpd'
+	service 'httpd' do
+	action [:enable, :start]
+end
+
+template '/var/www/html/index.html' do
+	source 'index.html.erb'
+end
+
+//Chef Local Node Command
+chef-client --local-mode --runlist 'recipe[httpd_deploy]'
+
+
+
+//
+//To create a new cookbook
+1
+knife cookbook create cookbook_name
+Note: use underscore instead of “-” (hyphen) in cookbook names. Hypen seem to prevent identification of LWRPs included in the cookbook.
+
+//To upload a new or modified cookbook
+
+knife cookbook upload cookbook_name
+
+//To list all the nodes currently defined in Chef
+
+knife node list
+
+//To show details about a node
+
+knife node show node_name -l
+
+Note: -l option generates a detailed list of properties about the node. Leaving it out will generate a summary about the node. Use -a option to query about a particular node attribute
+
+//To edit a new node or modifying an existing node
+
+knife node edit node_name
+This will let you edit the node details using the default editor set
+
+//To add a node defined in a file to Chef
+
+knife node from file file_name
+
+//To list all the roles defined in Chef
+
+knife role list
+
+//To show details about a role
+
+knife role show role_name
+Use -a option to query about a particular role attribute value
+
+//To add a role from a file
+
+knife role from file file_name
+
+//To edit a new or existing role
+
+knife role edit role_name
+
+//To add a role or recipe to a node
+knife node run_list add node_name "recipe[cookbook::recipe]"
+knife node run_list add node_name "role[role_name]"
+knife node run_list add node_name "role[role_name],recipe[cookbook::recipe]"
+
+//To remove role or recipe from a node use “remove” instead of “add”
+
+knife node run_list remove node_name "role[role_name]"
+
+//To bootstrap a new node with Chef
+
+knife bootstrap new-host-ip -x root -P password -N node_name
+
+chef verify
+
+puttygen /Users/saupathak/Desktop/private.ppk  -O private-openssh -o key.pem
+
+
+
+https://www.thegeekstuff.com/2017/01/chef-knife-cookbook-upload/

@@ -1,0 +1,269 @@
+OpenShift Useful Tip And Tricks
+
+// Save the state of Enviroment
+
+
+oc cluster up --host-data-dir=/Users/saupathak/Devops --use-existing-config ----env NO_PROXY "172.30.1.1/24"
+
+
+//Login with system
+oc login -u system:admin
+
+// Add policy
+oc adm policy add-scc-to-user anyuid -z default
+
+
+// add cluster role to admin named Saurabh
+oc adm policy add-cluster-role-to-user cluster-admin saurabh
+
+
+// docker login with the username and password - Before this go to default project and create route with https for the registry . Get the
+
+
+// oc login command token and add it below
+
+docker login -u saurabh -p v45BCR8Ds4cXK5-pHufHXriowoevdyFA-LhkZTtedcg docker-registry-default.127.0.0.1.nip.io
+
+
+//docker images
+docker images
+
+
+// docker pull from image
+docker pull saurabhpathak21/tomcat-s2i
+
+
+//create image stream
+oc create is tomcat-s2i -n myproject
+
+
+// oc get images from my project
+oc get is -n myproject
+ 
+
+
+//tag docker image to image stream path
+docker tag saurabhpathak21/tomcat-s2i docker-registry-default.127.0.0.1.nip.io/myproject/tomcat-s2i
+ 
+
+
+// push image to docker registry
+docker push docker-registry-default.127.0.0.1.nip.io/myproject/tomcat-s2i
+ 
+
+
+//describe image
+oc describe is tomcat-s2i
+ 
+
+
+//Add image puller role to my project
+oc adm policy add-role-to-group system:image-puller system:serviceaccounts:openshift -n myproject
+ 
+
+
+//import image from my project to open shift
+oc import-image tomcat-s2i --from=172.30.1.1:5000/myproject/tomcat-s2i -n openshift --confirm --insecure
+ 
+
+
+//add annotations tag to make it visible on the Openshift dashboard
+oc edit is/tomcat-s2i -n openshift
+ 
+
+
+Add the following : to the file
+annotations:
+    description: tomcat builder
+    openshift.io/display-name: tomcat builder
+    tags: builder, tomcat
+ 
+
+
+//Give privileges to the project
+oc edit scc privileged -n default
+ 
+
+and add the last line.
+ 
+users:
+- system:serviceaccount:default:router
+- system:serviceaccount:default:registry
+- system:serviceaccount:openshift-infra:build-controller
+- system:serviceaccount:myproject:builder
+ 
+ 
+ 
+Process to set up OpenJdk Instance
+ 
+oc adm policy add-scc-to-user anyuid -z default
+ 
+oc adm policy add-cluster-role-to-user cluster-admin saurabh
+ 
+oc new-project {projectname}
+ 
+vi openjdk-s2i-imagestream.json->
+ 
+Add  content from the following link:
+ 
+https://gist.githubusercontent.com/tqvarnst/3ca512b01b7b7c1a1da0532939350e23/raw/3869a54c7dd960965f0e66907cdc3eba6d160cad/openjdk-s2i-imagestream.json
+ 
+oc create -f openjdk-s2i-imagestream.json
+ 
+oc policy add-role-to-user system:image-puller system:serviceaccount::default -n {projectname}
+ 
+oc get is -n {projectname}
+ 
+oc adm policy add-role-to-group system:image-puller system:serviceaccounts:openshift -n {projectname}
+ 
+oc import-image redhat-openjdk18-openshift --from=registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift -n openshift --confirm --insecure
+ 
+oc edit is/redhat-openjdk18-openshift -n openshift
+ 
+Add the following : to the file
+annotations:
+    description: openjdk builder
+    openshift.io/display-name: Open Idk builder
+    tags: builder, openjdk
+ 
+ oc edit scc privileged -n default
+ 
+and add the last line.
+ 
+users:
+- system:serviceaccount:default:router
+- system:serviceaccount:default:registry
+- system:serviceaccount:openshift-infra:build-controller
+- system:serviceaccount:{projectname}:builder
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+														Advance Commands
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+DEV
+ 
+1)
+
+Create Jar.
+***************************************************
+dir
+cd C:\Program Files (x86)\Jenkins\workspace\Create OpenShiftJars\%Project%
+mvn clean install -Dmaven.test.skip=true
+*****************************************************
+
+
+2)Build jars
+ 
+oc start-build %projectname% --from-file="C:/Program Files (x86)/Jenkins/workspace/Create OpenShiftJars/%project%/target/%project%-%version%.jar" --follow
+ 
+ 
+-->>Patch
+ 
+echo setting version to %version%
+ 
+oc login -u %username% -p %password% %url%
+oc project %namespace%
+ 
+oc patch bc/%project% -p "[{\"op\":\"replace\",\"path\":\"/spec/output/to/name\",\"value\":\"%project%:%VERSION%\"}]" --type=json
+ 
+oc start-build %project% --from-file="C:\Program Files (x86)\Jenkins\workspace\Create OpenShiftJars\%jarname%\target\%jarname%-%VERSION%.jar" --follow
+ 
+oc patch dc/%project%  -p "[{\"op\":\"replace\",\"path\":\"/spec/template/spec/containers/0/image\",\"value\":\"docker-registry.default.svc:5000/dev/%project%:%VERSION%\"}]" --type=json
+ 
+-->>Rollback
+ 
+oc login -u %username% -p %p@ssw0rd% %url%
+oc project %namespace%
+ 
+oc patch dc/%project%  -p "[{\"op\":\"replace\",\"path\":\"/spec/template/spec/containers/0/image\",\"value\":\"docker-registry.default.svc:5000/dev/%project%:%VERSION%\"}]" --type=json
+ 
+*******************************************************
+
+
+3)Configs Maps
+ 
+oc delete cm %project%-cm
+oc delete cm %project%-commons-cm
+ 
+oc create configmap %project%-cm --from-file="%projectpath%/%mapfolder%/application-%configmapname%.yml"
+ 
+oc create configmap %project%-commons-cm --from-file="%projectpath%/%mapfolder%/commons.properties" --from-file="%projectpath%/Global/keycloakconfig.properties" --from-file="%projectpath%/Global/encryptionconfig.properties"
+ 
+oc set volume dc/%project% --add --overwrite=true --name=config-volume --mount-path=/deployments/config -t configmap --configmap-name=%project%-cm
+ 
+oc set env dc/%project% JAVA_OPTIONS="-Djavax.net.ssl.trustStore=/data/mwuat/omni.jks -Djavax.net.ssl.trustStorePassword=123"
+ 
+oc set volume dc/%project% --add --overwrite=true --name=commons-volume --mount-path=/deployments/global -t configmap --configmap-name=%project%-commons-cm
+ 
+oc volume dc/%project% --add --overwrite --name mwuat --mount-path /data/mwuat --type secret --secret-name mwuat
+ 
+oc set env dc/%project% TZ=Asia/Jakarta
+ 
+oc set env dc/%project% JAVA_TOOL_OPTIONS="-Duser.home=/home/jboss -Duser.name=jboss -Duser.timezone=GMT+07:00 -Xms2048M -Xmx2048M"
+ 
+ 
+******************************************************************************************************
+ 
+4) PUSH to Nexus
+ 
+oc login -u %username% -p %password% %url%
+oc project %namespace%
+oc patch bc/%service%backup -p "[{\"op\":\"replace\",\"path\":\"/spec/strategy/sourceStrategy/from/name\",\"value\":\"%service%:%VERSION%\"},{\"op\":\"replace\",\"path\":\"/spec/output/to/name\",\"value\":\"%registry%:%registryport%/%project%/%service%:%VERSION%\"}]" --type=json
+ 
+oc start-build %service%backup
+ 
+ 
+***********************************************************************************************************
+ 
+ 
+5) Create Build in Prod/DR  from CICD prod/DR to PROD/DR --- Only 1 time
+ 
+oc login -u %username% -p %password% %url% --insecure-skip-tls-verify
+oc project %namespace%
+oc create is  %project% -n %namespace%
+oc project cicd%namespace%
+oc process extregistry-pull-template BUILD_NAME=%project%%namespace% OUTPUT_NAMESPACE=%namespace% OUTPUT_IMAGE_NAME=%project% OUTPUT_IMAGE_VERSION=%version% SOURCE_REGISTRY=%registry% SOURCE_IMAGE_NAME=%project% SOURCE_IMAGE_VERSION=%version% PULL_SECRET=nexus%namespace%secure  PUSH_SECRET=%pushsecret%|oc create -f -
+oc start-build %project%%namespace% --follow -n cicd%namespace%
+oc new-app %project% -n %namespace%
+oc expose svc/%project% -n %namespace%
+oc patch route %project% -p "[{\"op\":\"replace\",\"path\":\"/spec/host\",\"value\":\"%project%\"}]" --type=json -n %namespace%
+ 
+ 
+6) Redeploy to PROD n DR
+ 
+ 
+oc login -u admin -p P@ssw0rd %url%
+ 
+oc project cicd%namespace%
+ 
+oc patch bc/%project%%namespace% -p "[{\"op\":\"replace\",\"path\":\"/spec/strategy/sourceStrategy/from/name\",\"value\":\"%registry%/%project%:%version%\"},{\"op\":\"replace\",\"path\":\"/spec/output/to/name\",\"value\":\"%project%:%version%\"}]" --type=json -n cicd%namespace%
+ 
+oc start-build %project%%namespace% -n cicd%namespace%
+ 
+ 
+7) Config MAps PROD/DR
+ 
+oc login -u admin -p P@ssw0rd %url% --insecure-skip-tls-verify=false
+oc project %namespace%
+ 
+oc delete cm %project%-cm
+oc delete cm %project%-commons-cm
+ 
+oc create configmap %project%-cm --from-file="%projectpath%/%mapfolder%/application-%configmapname%.yml"
+ 
+oc create configmap %project%-commons-cm --from-file="%projectpath%/%mapfolder%/commons.properties" --from-file="%projectpath%/Global/keycloakconfig.properties" --from-file="%projectpath%/Global/encryptionconfig.properties"
+ 
+oc set volume dc/%project% --add --overwrite=true --name=config-volume --mount-path=/deployments/config -t configmap --configmap-name=%project%-cm
+ 
+oc set volume dc/%project% --add --overwrite=true --name=commons-volume --mount-path=/deployments/global -t configmap --configmap-name=%project%-commons-cm
+ 
+oc set env dc/%project% TZ=Asia/Jakarta -n %namespace%
+oc set env dc/%project% JAVA_TOOL_OPTIONS="-Duser.home=/home/jboss -Duser.name=jboss -Duser.timezone=GMT+07:00 -Xms2048M -Xmx2048M"
+ 
+ 
+oc volume dc/%project% --add --overwrite --name mwuat --mount-path /data/mwuat --type secret --secret-name mwuat
+ 
+oc set env dc/%project% JAVA_OPTIONS="-Djavax.net.ssl.trustStore=/data/mwuat/omni.jks -Djavax.net.ssl.trustStorePassword=123"

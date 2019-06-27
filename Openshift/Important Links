@@ -1,0 +1,71 @@
+https://12factor.net/codebase
+
+//Local Cluster Management
+
+https://github.com/openshift/origin/blob/master/docs/cluster_up_down.md#macos-with-docker-for-mac
+
+## OpenShift Versions
+https://hub.docker.com/r/openshift/origin/tags/
+
+//Install Docker on RHEL
+https://cloudacademy.com/blog/systemtap-aws-ec2-docker/
+
+//
+https://github.com/debianmaster/openshift-examples/tree/master/origin-on-aws-single-node
+
+// Maven+++ Nexus ++Docker ++NPM
+
+http://codeheaven.io/using-nexus-3-as-your-repository-part-1-maven-artifacts/
+
+
+//Openshift On AWS
+https://medium.com/@danmartines/how-to-setup-openshift-on-aws-ec2-d764bca28c8e
+
+//Solr + Zookeper
+https://medium.com/@sarkaramrit2/setting-up-solr-cloud-6-3-0-with-zookeeper-3-4-6-867b96ec4272
+
+//Code Labs
+
+https://codelabs.developers.google.com
+
+
+
+Examples:
+  # Start OpenShift on a new docker machine named 'openshift'
+  oc cluster up --create-machine
+
+  # Start OpenShift using a specific public host name
+  oc cluster up --public-hostname=my.address.example.com
+
+  # Start OpenShift and preserve data and config between restarts
+  oc cluster up --host-data-dir=/mydata --use-existing-config
+
+  # Use a different set of images
+  oc cluster up --image="registry.example.com/origin" --version="v1.1"
+
+  # Specify which set of image streams to use
+  oc cluster up --image-streams=centos7
+
+Options:
+      --create-machine=false: Create a Docker machine if one doesn't exist
+      --docker-machine='': Specify the Docker machine to use
+  -e, --env=[]: Specify a key-value pair for an environment variable to set on OpenShift container
+      --forward-ports=true: Use Docker port-forwarding to communicate with origin container. Requires 'socat' locally.
+      --host-config-dir='/var/lib/origin/openshift.local.config': Directory on Docker host for OpenShift configuration
+      --host-data-dir='': Directory on Docker host for OpenShift data. If not specified, etcd data will not be persisted on the host.
+      --host-pv-dir='/var/lib/origin/openshift.local.pv': Directory on host for OpenShift persistent volumes
+      --host-volumes-dir='/var/lib/origin/openshift.local.volumes': Directory on Docker host for OpenShift volumes
+      --http-proxy='': HTTP proxy to use for master and builds
+      --https-proxy='': HTTPS proxy to use for master and builds
+      --image='openshift/origin': Specify the images to use for OpenShift
+      --image-streams='centos7': Specify which image streams to use, centos7|rhel7
+      --logging=false: Install logging (experimental)
+      --metrics=false: Install metrics (experimental)
+      --no-proxy=[]: List of hosts or subnets for which a proxy should not be used
+      --public-hostname='': Public hostname for OpenShift cluster
+      --routing-suffix='': Default suffix for server routes
+      --server-loglevel=0: Log level for OpenShift server
+      --service-catalog=false: Install service catalog (experimental).
+      --skip-registry-check=false: Skip Docker daemon registry check
+      --use-existing-config=false: Use existing configuration if present
+      --version='': Specify the tag for OpenShift images

@@ -1,0 +1,10 @@
+Fun time
+
+// Create Your Own WebServer any Point of Time Check and Test The STuff
+
+python -m SimpleHTTPServer 8000
+
+//get the Weather reports in Cool manner 
+curl http://wttr.in/bengaluru
+
+
