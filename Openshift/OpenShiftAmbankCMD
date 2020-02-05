@@ -48,7 +48,6 @@ https://my.freenom.com/clientarea.php?action=domaindetails&id=1044680293
 //Urls
 
 
-oc new-app --name='catapultsignupservice' --labels name='catapultsignupservice' redhat-openjdk18-openshift~https://pthadani@bitbucket.org/ambank_poc/ambank_microservices.git#Openshift --context-dir=CatapultSignUpService
+oc new-app --name='signupservice' --labels name='catapultsignupservice' redhat-openjdk18-openshift~https://username@bitbucket.org/poc/microservices.git#Openshift --context-dir=SignUpService
 
 
-https://pthadani:August@1@bitbucket.org/ambank_poc/ambank_microservices.git
